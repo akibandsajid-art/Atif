@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Guess The Person</title>
+
+  <link rel="stylesheet" href="./style.css">
+<link rel="manifest" href="./manifest.webmanifest">
+
+</head>
+
+<body>
+
+  <div class="game">
+
+    <!-- GAME MODE -->
+
+    <div id="modeSelection">
+
+      <h2>CHOOSE GAME MODE</h2>
+
+      <button onclick="startGame('2player')">
+        👥 2 PLAYERS
+      </button>
+
+      <button onclick="showDifficulty()">
+  🤖 VS COMPUTER
+      </button>
+    </div>
+<div id="difficultySelection" style="display:none;">
+  <h2>CHOOSE DIFFICULTY</h2>
+
+  <button onclick="startComputerGame('easy')">
+    🟢 EASY
+  </button>
+
+  <button onclick="startComputerGame('medium')">
+    🟡 MEDIUM
+  </button>
+
+  <button onclick="startComputerGame('hard')">
+    🔴 HARD
+  </button>
+</div>
+    
+
+
+    <!-- GAME -->
+
+    <h1>GUESS THE PERSON</h1>
+
+    <p id="status">
+      Choose game mode
+    </p>
+
+
+    <!-- CHARACTER BOARD -->
+
+    <div id="board" class="board"></div>
+
+
+    <!-- QUESTIONS -->
+
+    <div class="questions">
+
+      <h2>ASK A QUESTION</h2>
+
+      <button onclick="showQuestion('gender')">
+        👤 Gender
+      </button>
+
+      <button onclick="showQuestion('eyes')">
+        👁️ Eye Color
+      </button>
+
+      <button onclick="showQuestion('hair')">
+        💇 Hair
+      </button>
+
+      <button onclick="showQuestion('hairColor')">
+        🎨 Hair Color
+      </button>
+
+      <button onclick="showQuestion('skin')">
+        🖐️ Skin Tone
+      </button>
+
+      <button onclick="showQuestion('accessories')">
+        👓 Accessories
+      </button>
+
+      <button onclick="showQuestion('facialHair')">
+        🧔 Facial Hair
+      </button>
+
+    </div>
+
+
+    <!-- ANSWER -->
+
+    <div id="answer"></div>
+<button id="finalGuessBtn" style="display:none;">
+  🎯 FINAL GUESS
+</button>
+    
+  </div>
+
+
+  <!-- QUESTION POPUP -->
+
+  <div id="questionModal" class="modal">
+
+    <div class="modal-box">
+
+      <button
+        class="close-btn"
+        onclick="closeQuestion()">
+        ✕
+      </button>
+
+      <h2 id="questionTitle">
+        QUESTION
+      </h2>
+
+      <div id="questionOptions"></div>
+
+    </div>
+
+  </div>
+
+
+  <script src="./script.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js");
+  });
+}
+</script>
+
+</body>
+
+</html>

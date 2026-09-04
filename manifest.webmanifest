@@ -1,0 +1,30 @@
+{
+  "name": "Guess The Person",
+  "short_name": "Guess Person",
+  "id": "/guess-the-person",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "en",
+  "description": "A fun Guess Who style game where you identify the secret person by asking questions.",
+  "categories": [
+    "games"
+  ],
+  "background_color": "#FFFFFF",
+  "theme_color": "#3d7edb",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
