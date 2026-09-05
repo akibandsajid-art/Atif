@@ -1,21 +1,35 @@
-html {
-  height: 100%;
-  background: 50% 50% no-repeat
-    url('data:image/svg+xml,<svg viewBox="-20 -5 60 40" width="140" xmlns="http://www.w3.org/2000/svg" opacity="0.2"><path d="M1 8l11-7 11 7v8l-11 7-11-7zm0 0l11 8 11-8m0 8L12 8 1 16M12 1v7m0 8v7" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/><text x="-12" y="32" font-size="5" font-family="monospace" fill="currentColor">Built on CodePen</text></svg>');
-}
-.character {
-  position: relative;
-}
-
-.eliminated-cross {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 70px;
-  font-weight: 900;
-  color: red;
-  text-shadow: 2px 2px 4px white;
-  pointer-events: none;
-  z-index: 10;
-}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#03122b}
+body{font-family:Arial,Helvetica,sans-serif;color:#fff;background:radial-gradient(circle at 50% -15%,#1955a5 0,transparent 38%),linear-gradient(180deg,#061a3b 0%,#020914 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(0,183,255,.06),transparent 35%,rgba(255,255,255,.03) 65%,transparent);z-index:-1}
+.game{width:min(100%,1100px);margin:0 auto;padding:12px 10px 28px}
+#modeSelection,#difficultySelection{max-width:540px;margin:10px auto 18px;padding:22px 18px;border:1px solid rgba(76,174,255,.45);border-radius:25px;background:linear-gradient(145deg,rgba(12,43,91,.96),rgba(4,18,42,.96));box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.13);text-align:center}
+#modeSelection h2,#difficultySelection h2,.questions h2{margin:3px 0 15px;font-size:18px;letter-spacing:1.4px;text-transform:uppercase}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+#modeSelection button,#difficultySelection button,.questions button,#finalGuessBtn{border:1px solid rgba(125,198,255,.3);border-radius:15px;min-height:51px;color:#fff;font-weight:800;background:linear-gradient(145deg,#174e92,#0c2b58);box-shadow:0 6px 0 #04152f,0 12px 25px rgba(0,0,0,.25);cursor:pointer;transition:transform .12s,filter .12s,box-shadow .12s}
+#modeSelection button,#difficultySelection button{width:100%;margin:6px 0}
+#modeSelection button:active,#difficultySelection button:active,.questions button:active,#finalGuessBtn:active{transform:translateY(3px);filter:brightness(1.12);box-shadow:0 3px 0 #04152f,0 7px 14px rgba(0,0,0,.2)}
+h1{margin:8px 0 5px;text-align:center;font-size:clamp(27px,7vw,44px);font-weight:1000;letter-spacing:2px;line-height:1.05;text-shadow:0 4px 18px rgba(0,0,0,.55)}
+#status{max-width:800px;margin:0 auto 13px;padding:12px 15px;border:1px solid rgba(100,190,255,.28);border-radius:15px;background:rgba(4,20,47,.78);box-shadow:inset 0 1px rgba(255,255,255,.1),0 8px 25px rgba(0,0,0,.2);text-align:center;font-weight:800}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0 18px}
+.character{position:relative;min-width:0;overflow:hidden;padding:5px 4px 7px;border:2px solid #1677d5;border-radius:16px;background:linear-gradient(155deg,#2874c5 0%,#0c3268 62%,#061b3d 100%);color:#fff;box-shadow:0 8px 17px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.25);cursor:pointer;transition:transform .13s,filter .13s,border-color .13s}
+.character:active{transform:scale(.965)}
+.character:hover{border-color:#69c7ff;filter:brightness(1.06)}
+.character .avatar{width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:12px;background:#0b2c5b;box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
+.character .avatar img{display:block;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
+.character-name{padding:7px 2px 1px;text-align:center;font-size:clamp(11px,2.8vw,15px);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 4px rgba(0,0,0,.55)}
+.eliminated-cross{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.36);color:#ff2525;font-size:clamp(42px,11vw,78px);font-weight:1000;text-shadow:2px 2px 5px #fff,-2px -2px 5px #fff;pointer-events:none;z-index:10}
+.questions{margin:12px auto 14px;padding:17px 14px;border:1px solid rgba(86,177,255,.25);border-radius:23px;background:linear-gradient(145deg,rgba(10,35,75,.92),rgba(3,16,37,.92));box-shadow:0 16px 38px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.09)}
+.questions h2{color:#dcecff}
+.questions button{width:calc(50% - 8px);margin:4px}
+.questions button:disabled{opacity:.38;cursor:not-allowed;filter:grayscale(.3)}
+#answer{min-height:31px;margin:9px auto;text-align:center;font-size:21px;font-weight:1000;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+#finalGuessBtn{display:block;width:min(100%,540px);margin:10px auto 0;background:linear-gradient(145deg,#ffd94a,#f27a14);border-color:#ffd65a;color:#251300;font-size:17px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:15px;background:rgba(1,8,22,.78);backdrop-filter:blur(9px);z-index:100}
+.modal-box{position:relative;width:min(100%,540px);max-height:90vh;overflow:auto;padding:24px 16px 17px;border:1px solid rgba(102,190,255,.38);border-radius:25px;background:linear-gradient(160deg,#143d76,#061b3e);box-shadow:0 25px 70px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.12)}
+.modal-box h2{margin:0 38px 14px 4px;text-align:center;font-size:21px}
+#questionOptions button{width:100%;min-height:49px;margin:5px 0;border:1px solid rgba(140,210,255,.25);border-radius:14px;background:linear-gradient(145deg,#245b9e,#123565);color:#fff;font-weight:800}
+#questionOptions button:disabled{opacity:.34}
+.close-btn{position:absolute;top:10px;right:10px;width:40px;height:40px;border:1px solid rgba(255,255,255,.15);border-radius:50%;background:rgba(255,255,255,.11);color:#fff;font-size:20px;font-weight:900}
+@media (min-width:760px){.board{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.character{border-radius:18px}.character .avatar{border-radius:14px}.questions{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}.questions h2{grid-column:1/-1;text-align:center;margin-bottom:8px}.questions button{width:100%;margin:0}}
+@media (max-width:520px){.game{padding-left:6px;padding-right:6px}.board{gap:6px}.character{border-radius:13px;padding:4px 3px 6px}.character .avatar{border-radius:10px}.questions{padding:14px 8px}.questions button{width:100%;margin:4px 0}h1{font-size:28px}}
