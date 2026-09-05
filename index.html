@@ -1,142 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#081d43">
   <title>Guess The Person</title>
-
-  <link rel="stylesheet" href="./style.css">
   <link rel="manifest" href="./manifest.webmanifest">
-
+  <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
+  <main class="app-shell">
+    <!-- HOME -->
+    <section id="homeScreen" class="screen home-screen">
+      <div class="home-topbar">
+        <button class="icon-btn" onclick="openProfile()" aria-label="Profile">👤</button>
+        <div class="home-coins"><span>⭐</span> Guess The Person</div>
+        <button class="icon-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
+      </div>
 
-  <div class="game">
+      <div class="hero-art" aria-hidden="true">
+        <div class="mystery-glow"></div>
+        <div class="float-face face-a"><img src="https://akibandsajid-art.github.io/Atif/lucy.png" alt=""></div>
+        <div class="float-face face-b"><img src="https://akibandsajid-art.github.io/Atif/ryan.png" alt=""></div>
+        <div class="float-face face-c"><img src="https://akibandsajid-art.github.io/Atif/aman.png" alt=""></div>
+        <div class="question-mark q-a">?</div>
+        <div class="question-mark q-b">?</div>
+        <div class="question-mark q-c">?</div>
+        <div class="hero-magnifier">🔍</div>
+      </div>
 
-    <!-- GAME MODE -->
+      <div class="game-logo">
+        <div>GUESS</div>
+        <strong>THE PERSON</strong>
+        <span>ASK • ELIMINATE • GUESS</span>
+      </div>
 
-    <div id="modeSelection">
+      <div class="main-modes">
+        <button class="mode-card blue" onclick="startGame('2player')">
+          <span class="mode-icon">👥</span><span>2 PLAYER GAME</span>
+        </button>
+        <button class="mode-card purple" onclick="showDifficulty()">
+          <span class="mode-icon">🤖</span><span>COMPUTER</span>
+        </button>
+        <button class="mode-card orange" onclick="showOnlineComingSoon()">
+          <span class="mode-icon">🌐</span><span>ONLINE</span>
+        </button>
+      </div>
 
-      <h2>CHOOSE GAME MODE</h2>
+      <div class="home-tools">
+        <button onclick="openHelp()"><span>❓</span> Help</button>
+        <button onclick="openAbout()"><span>🏆</span> Stats</button>
+        <button onclick="openSettings()"><span>⚙️</span> Settings</button>
+      </div>
+    </section>
 
-      <button onclick="startGame('2player')">
-        👥 2 PLAYERS
-      </button>
-
-      <button onclick="showDifficulty()">
-  🤖 VS COMPUTER
-      </button>
-    </div>
-<div id="difficultySelection" style="display:none;">
-  <h2>CHOOSE DIFFICULTY</h2>
-
-  <button onclick="startComputerGame('easy')">
-    🟢 EASY
-  </button>
-
-  <button onclick="startComputerGame('medium')">
-    🟡 MEDIUM
-  </button>
-
-  <button onclick="startComputerGame('hard')">
-    🔴 HARD
-  </button>
-</div>
-    
-
+    <!-- DIFFICULTY -->
+    <section id="difficultyScreen" class="screen overlay-screen hidden">
+      <div class="menu-card">
+        <button class="close-menu" onclick="goHome()">✕</button>
+        <div class="menu-icon">🤖</div>
+        <h2>CHOOSE DIFFICULTY</h2>
+        <button class="difficulty-btn easy" onclick="startComputerGame('easy')">🟢 EASY <small>Relaxed opponent</small></button>
+        <button class="difficulty-btn medium" onclick="startComputerGame('medium')">🟡 MEDIUM <small>Smart questions</small></button>
+        <button class="difficulty-btn hard" onclick="startComputerGame('hard')">🔴 HARD <small>Best questions</small></button>
+      </div>
+    </section>
 
     <!-- GAME -->
+    <section id="gameScreen" class="screen game-screen hidden">
+      <header class="game-header">
+        <button class="header-btn" onclick="confirmExit()" aria-label="Back">←</button>
+        <div class="mini-logo">GUESS <b>THE PERSON</b></div>
+        <button class="header-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
+      </header>
 
-    <h1>GUESS THE PERSON</h1>
+      <div class="players-strip">
+        <div id="player1Badge" class="player-badge active"><span class="badge-avatar">👤</span><span>PLAYER 1</span></div>
+        <div id="turnLabel" class="turn-label">YOUR TURN</div>
+        <div id="player2Badge" class="player-badge"><span class="badge-avatar">👤</span><span id="player2Name">PLAYER 2</span></div>
+      </div>
 
-    <p id="status">
-      Choose game mode
-    </p>
+      <!-- The latest question/answer stays above the board -->
+      <div id="questionResult" class="question-result hidden"></div>
+      <div id="status" class="status-bar">Choose your secret character</div>
 
+      <div class="board-wrap">
+        <div id="board" class="board"></div>
+      </div>
 
-    <!-- CHARACTER BOARD -->
+      <div id="questionPanel" class="question-panel hidden">
+        <div class="panel-title">ASK A QUESTION</div>
+        <div id="questionButtons" class="question-buttons"></div>
+      </div>
 
-    <div id="board" class="board"></div>
+      <div id="actionPanel" class="action-panel hidden">
+        <button id="passBtn" class="action-btn pass-btn" onclick="passTurn()">↪ PASS</button>
+        <button id="finalGuessBtn" class="action-btn guess-btn hidden" onclick="finalGuess()">🎯 GUESS</button>
+      </div>
+    </section>
+  </main>
 
-
-    <!-- QUESTIONS -->
-
-    <div class="questions">
-
-      <h2>ASK A QUESTION</h2>
-
-      <button onclick="showQuestion('gender')">
-        👤 Gender
-      </button>
-
-      <button onclick="showQuestion('eyes')">
-        👁️ Eye Color
-      </button>
-
-      <button onclick="showQuestion('hair')">
-        💇 Hair
-      </button>
-
-      <button onclick="showQuestion('hairColor')">
-        🎨 Hair Color
-      </button>
-
-      <button onclick="showQuestion('skin')">
-        🖐️ Skin Tone
-      </button>
-
-      <button onclick="showQuestion('accessories')">
-        👓 Accessories
-      </button>
-
-      <button onclick="showQuestion('facialHair')">
-        🧔 Facial Hair
-      </button>
-
+  <!-- QUESTION MODAL -->
+  <div id="questionModal" class="modal hidden">
+    <div class="modal-box question-modal-box">
+      <button class="modal-close" onclick="closeQuestion()">✕</button>
+      <div id="questionIcon" class="modal-icon">❓</div>
+      <h2 id="questionTitle">QUESTION</h2>
+      <div id="questionOptions" class="question-options"></div>
     </div>
-
-
-    <!-- ANSWER -->
-
-    <div id="answer"></div>
-<button id="finalGuessBtn" style="display:none;">
-  🎯 FINAL GUESS
-</button>
-    
   </div>
 
-
-  <!-- QUESTION POPUP -->
-
-  <div id="questionModal" class="modal">
-
-    <div class="modal-box">
-
-      <button
-        class="close-btn"
-        onclick="closeQuestion()">
-        ✕
-      </button>
-
-      <h2 id="questionTitle">
-        QUESTION
-      </h2>
-
-      <div id="questionOptions"></div>
-
+  <!-- REVEAL -->
+  <div id="revealModal" class="modal hidden">
+    <div class="reveal-box">
+      <div class="reveal-title">FINAL REVEAL</div>
+      <div class="reveal-subtitle" id="revealSubtitle">Let's see the picks...</div>
+      <div class="reveal-versus">
+        <div class="reveal-side you-side">
+          <span>YOUR GUESS</span>
+          <div id="guessRevealCard" class="reveal-card"></div>
+        </div>
+        <div class="versus">VS</div>
+        <div class="reveal-side opponent-side">
+          <span>OPPONENT PICKED</span>
+          <div id="opponentRevealCard" class="reveal-card"></div>
+        </div>
+      </div>
+      <div id="revealOutcome" class="reveal-outcome"></div>
+      <div class="reveal-actions">
+        <button onclick="startRematch()">🔄 PLAY AGAIN</button>
+        <button onclick="goHome()">🏠 HOME</button>
+      </div>
     </div>
-
   </div>
 
+  <!-- SIMPLE INFO MODALS -->
+  <div id="infoModal" class="modal hidden">
+    <div class="modal-box info-box">
+      <button class="modal-close" onclick="closeInfo()">✕</button>
+      <div id="infoIcon" class="modal-icon">ℹ️</div>
+      <h2 id="infoTitle">INFO</h2>
+      <div id="infoContent"></div>
+    </div>
+  </div>
 
   <script src="./script.js"></script>
-
 </body>
-
 </html>
