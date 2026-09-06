@@ -494,3 +494,6 @@ showFinalReveal(guess,secret,correct,false);
 }
 
 function makeRevealCard(character,extraClass=""){return character?`<div class="reveal-card ${extraClass}"><img src="${imageUrl(character)}" alt="${character.name}"></div>`:`<div class="reveal-card ${extraClass}"></div>`
+                                                 function openHelp(){
+  openHowToPlay();
+                                                 }
