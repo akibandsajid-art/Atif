@@ -46,3 +46,92 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
 
 @media (max-height:700px){.hero-art{height:150px}.main-modes{margin-top:10px}.game-logo span{margin-top:6px}.game-logo div{font-size:29px}.game-logo strong{font-size:25px}.main-modes .mode-card{min-height:50px}.home-tools{margin-top:9px}.question-buttons button{min-height:28px}.action-btn{min-height:39px}}
 @media (min-width:700px){.home-screen{padding-top:18px}.hero-art{height:220px}.game-screen{padding-left:12px;padding-right:12px}.board{max-width:650px}.character .avatar{height:calc(100% - 18px)}.character-name{height:18px;line-height:18px;font-size:12px}}
+.how-to-play-btn {
+  width: 100%;
+  max-width: 320px;
+  margin: 8px auto 12px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1e5eff, #7b2cff);
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+/* HOW TO PLAY - SWIPE ANIMATION */
+#howToPlayContent {
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+#howToPlayContent .how-step {
+  animation: howSlideIn 0.28s ease;
+}
+
+@keyframes howSlideIn {
+  from {
+    transform: translateX(45px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.how-navigation button {
+  display: none;
+}
+/* HOW TO PLAY - PAGE DOTS */
+.how-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 4px;
+}
+
+.how-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #6b7280;
+  opacity: 0.45;
+  transition: all 0.25s ease;
+}
+
+.how-dots span.active {
+  width: 11px;
+  height: 11px;
+  background: #00d9ff;
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.7);
+}
+/* HOW TO PLAY - VISUAL BOX */
+.how-visual {
+  width: 100%;
+  height: 150px;
+  margin: 12px 0 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #123b78, #071d43);
+  border: 2px solid #00cfff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 70px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+.how-step h3,
+.how-step p,
+.how-step-icon {
+  display: none;
+}
+.how-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
