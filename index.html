@@ -35,6 +35,7 @@
         <span>ASK • ELIMINATE • GUESS</span>
       </div>
 
+      <button class="how-to-play-btn" onclick="openHowToPlay()">❓ HOW TO PLAY</button>
       <div class="main-modes">
         <button class="mode-card blue" onclick="startGame('2player')">
           <span class="mode-icon">👥</span><span>2 PLAYER GAME</span>
@@ -99,7 +100,36 @@
       </div>
     </section>
   </main>
+  
+<!-- HOW TO PLAY -->
+<div id="howToPlayModal" class="modal hidden">
+  <div class="modal-box how-to-play-box">
+    <button class="modal-close" onclick="closeHowToPlay()">✕</button>
 
+    <div class="modal-icon">🎮</div>
+    <h2>HOW TO PLAY</h2>
+
+    <div id="howToPlayContent">
+      <div class="how-step">
+        <div class="how-visual">🎯</div>
+        <div class="how-step-icon">🎯</div>
+        <h3>CHOOSE YOUR CHARACTER</h3>
+        <p>Choose one secret character. Your opponent must guess who you picked.</p>
+      </div>
+    </div>
+
+    <div class="how-navigation">
+      <button id="howBackBtn" onclick="howToPlayBack()" disabled>← BACK</button>
+      <div id="howPageIndicator" class="how-dots">
+  <span class="active"></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+      <button id="howNextBtn" onclick="howToPlayNext()">NEXT →</button>
+    </div>
+  </div>
+</div>
   <!-- QUESTION MODAL -->
   <div id="questionModal" class="modal hidden">
     <div class="modal-box question-modal-box">
