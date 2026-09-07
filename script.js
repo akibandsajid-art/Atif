@@ -1020,4 +1020,4 @@ function showGuessState(){
     ?.classList.remove("hidden");
 }
 
-function eliminateCharacter
+
