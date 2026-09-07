@@ -1,6 +1,7 @@
-========================================
+// ========================================
 // GUESS THE PERSON — FINAL GAME BUILD
 // ========================================
+
 let soundEnabled = true;
 
 function playSound(type){
@@ -40,8 +41,10 @@ function playSound(type){
 
     osc.start();
     osc.stop(ctx.currentTime+s[1]);
+
   }catch(e){}
 }
+
 let vibrationEnabled = true;
 
 function vibrate(type="light"){
@@ -56,6 +59,7 @@ function vibrate(type="light"){
     navigator.vibrate(40);
   }
 }
+
 let musicEnabled = true;
 let musicContext = null;
 let musicOscillator = null;
@@ -82,6 +86,7 @@ function startMusic(){
     gain.connect(musicContext.destination);
 
     musicOscillator.start();
+
   }catch(e){}
 }
 
@@ -97,8 +102,10 @@ function stopMusic(){
       musicContext.close();
       musicContext=null;
     }
+
   }catch(e){}
 }
+
 let gamesPlayed = Number(localStorage.getItem("gamesPlayed") || 0);
 let wins = Number(localStorage.getItem("wins") || 0);
 let winStreak = Number(localStorage.getItem("winStreak") || 0);
@@ -108,6 +115,7 @@ function saveStats(){
   localStorage.setItem("wins", wins);
   localStorage.setItem("winStreak", winStreak);
 }
+
 const characters = [
   {name:"Aman",gender:"Male",eyes:"Brown",hair:"Short",hairColor:"Brown",skin:"Dark",accessories:"None",facialHair:"Beard"},
   {name:"Theo",gender:"Male",eyes:"Blue",hair:"Short",hairColor:"Blonde",skin:"Light",accessories:"None",facialHair:"None"},
@@ -136,64 +144,184 @@ const characters = [
   {name:"Olivia",gender:"Female",eyes:"Green",hair:"Bald",hairColor:"Blonde",skin:"Dark",accessories:"Jewelry",facialHair:"None"},
   {name:"Lia",gender:"Female",eyes:"Brown",hair:"Short",hairColor:"Gray",skin:"Light",accessories:"Jewelry",facialHair:"None"},
   {name:"Chloe",gender:"Female",eyes:"Green",hair:"Long",hairColor:"Brown",skin:"Olive",accessories:"Jewelry",facialHair:"None"},
-  {name:"Mila",gender:"Female",eyes:"Brown",hair:"Long",hairColor:"Blonde",skin:"Dark",accessories:"Glasses",facialHair:"None"},
+  {name:"Mila",gender:"Female",eyes:"Long",hair:"Long",hairColor:"Blonde",skin:"Dark",accessories:"Glasses",facialHair:"None"},
   {name:"Naomi",gender:"Female",eyes:"Black",hair:"Long",hairColor:"Black",skin:"Light",accessories:"Jewelry",facialHair:"None"},
   {name:"Julia",gender:"Female",eyes:"Green",hair:"Short",hairColor:"Gray",skin:"Dark",accessories:"Jewelry",facialHair:"None"}
 ];
 
 const IMAGE_BASE = "https://akibandsajid-art.github.io/Atif/";
+
 const questionData = {
-  gender:["Male","Female"], eyes:["Blue","Green","Brown","Black"], hair:["Bald","Short","Long"],
-  hairColor:["Brown","Black","Blonde","Gray","Red"], skin:["Light","Olive","Dark"],
-  accessories:["None","Glasses","Headwear","Jewelry"], facialHair:["None","Moustache","Beard"]
+  gender:["Male","Female"],
+  eyes:["Blue","Green","Brown","Black"],
+  hair:["Bald","Short","Long"],
+  hairColor:["Brown","Black","Blonde","Gray","Red"],
+  skin:["Light","Olive","Dark"],
+  accessories:["None","Glasses","Headwear","Jewelry"],
+  facialHair:["None","Moustache","Beard"]
 };
-const questionNames = {gender:"Gender",eyes:"Eye Color",hair:"Hair",hairColor:"Hair Color",skin:"Skin Tone",accessories:"Accessories",facialHair:"Facial Hair"};
-const questionIcons = {gender:"👤",eyes:"👁️",hair:"💇",hairColor:"🎨",skin:"🖐️",accessories:"👓",facialHair:"🧔"};
+
+const questionNames = {
+  gender:"Gender",
+  eyes:"Eye Color",
+  hair:"Hair",
+  hairColor:"Hair Color",
+  skin:"Skin Tone",
+  accessories:"Accessories",
+  facialHair:"Facial Hair"
+};
+
+const questionIcons = {
+  gender:"👤",
+  eyes:"👁️",
+  hair:"💇",
+  hairColor:"🎨",
+  skin:"🖐️",
+  accessories:"👓",
+  facialHair:"🧔"
+};
 
 let gameMode = null;
 let computerDifficulty = "easy";
-let player1Character = null, player2Character = null, computerCharacter = null;
-let player1Remaining = [...characters], player2Remaining = [...characters];
-let player1Eliminated = [], player2Eliminated = [];
-let player1Board = [...characters], player2Board = [...characters];
-let askedQuestions = {1:{},2:{}};
+
+let player1Character = null,
+    player2Character = null,
+    computerCharacter = null;
+
+let player1Remaining = [...characters],
+    player2Remaining = [...characters];
+
+let player1Eliminated = [],
+    player2Eliminated = [];
+
+let player1Board = [...characters],
+    player2Board = [...characters];
+
+let askedQuestions = {
+  1:{},
+  2:{}
+};
+
 let currentPlayer = 1;
 let gameStarted = false;
 let selectingSecret = true;
 let lastQuestion = null;
 let revealTimer = null;
 
+let player1BoardShuffled = false;
+let player2BoardShuffled = false;
+
 const $ = id => document.getElementById(id);
-function imageUrl(character){return IMAGE_BASE + character.name.replace(/[^a-z0-9]/gi,"").toLowerCase() + ".png";}
-function drawCharacter(character){return `<img src="${imageUrl(character)}" alt="${character.name}" draggable="false">`;}
-function shuffleCharacters(list){for(let i=list.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[list[i],list[j]]=[list[j],list[i]];}return list;}
-function setScreen(name){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(name).classList.remove("hidden");}
+
+function imageUrl(character){
+  return IMAGE_BASE +
+    character.name.replace(/[^a-z0-9]/gi,"").toLowerCase() +
+    ".png";
+}
+
+function drawCharacter(character){
+  return `<img src="${imageUrl(character)}" alt="${character.name}" draggable="false">`;
+}
+
+function shuffleCharacters(list){
+  for(let i=list.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [list[i],list[j]]=[list[j],list[i]];
+  }
+  return list;
+}
+
+function setScreen(name){
+  document.querySelectorAll(".screen")
+    .forEach(s=>s.classList.add("hidden"));
+
+  $(name).classList.remove("hidden");
+}
 
 function resetGameVariables(){
-  player1Character=null;player2Character=null;computerCharacter=null;
-  player1Remaining=[...characters];player2Remaining=[...characters];
-  player1Eliminated=[];player2Eliminated=[];
-  player1Board=[...characters];player2Board=[...characters];
-  askedQuestions={1:{},2:{}};player1BoardShuffled=false;player2BoardShuffled=false;currentPlayer=1;gameStarted=false;selectingSecret=true;lastQuestion=null;
-  ["questionPanel","actionPanel","questionResult","finalGuessBtn"].forEach(id=>$(id)?.classList.add("hidden"));
-  $("questionButtons").innerHTML="";$("board").innerHTML="";
+  player1Character=null;
+  player2Character=null;
+  computerCharacter=null;
+
+  player1Remaining=[...characters];
+  player2Remaining=[...characters];
+
+  player1Eliminated=[];
+  player2Eliminated=[];
+
+  player1Board=[...characters];
+  player2Board=[...characters];
+
+  askedQuestions={1:{},2:{}};
+
+  player1BoardShuffled=false;
+  player2BoardShuffled=false;
+
+  currentPlayer=1;
+  gameStarted=false;
+  selectingSecret=true;
+  lastQuestion=null;
+
+  ["questionPanel","actionPanel","questionResult","finalGuessBtn"]
+    .forEach(id=>$(id)?.classList.add("hidden"));
+
+  $("questionButtons").innerHTML="";
+  $("board").innerHTML="";
 }
 
 function goHome(){
-  if(revealTimer){clearTimeout(revealTimer);revealTimer=null;}
-  document.querySelectorAll(".modal").forEach(m=>m.classList.add("hidden"));
-  resetGameVariables();gameMode=null;setScreen("homeScreen");
+  if(revealTimer){
+    clearTimeout(revealTimer);
+    revealTimer=null;
+  }
+
+  document.querySelectorAll(".modal")
+    .forEach(m=>m.classList.add("hidden"));
+
+  resetGameVariables();
+  gameMode=null;
+  setScreen("homeScreen");
 }
-function startGame(mode){startMusic();gameMode=mode;resetGameVariables();setScreen("gameScreen");updateTurnUI();renderSecretBoard();$("status").textContent="PLAYER 1 • CHOOSE YOUR SECRET CHARACTER";}
-function showDifficulty(){$("difficultyScreen").classList.remove("hidden");}
-function startComputerGame(difficulty){gameMode="computer";computerDifficulty=difficulty;resetGameVariables();setScreen("gameScreen");updateTurnUI();renderSecretBoard();$("status").textContent="YOU • CHOOSE YOUR SECRET CHARACTER";}
+
+function startGame(mode){
+  startMusic();
+
+  gameMode=mode;
+  resetGameVariables();
+
+  setScreen("gameScreen");
+  updateTurnUI();
+  renderSecretBoard();
+
+  $("status").textContent =
+    "PLAYER 1 • CHOOSE YOUR SECRET CHARACTER";
+}
+
+function showDifficulty(){
+  $("difficultyScreen").classList.remove("hidden");
+}
+
+function startComputerGame(difficulty){
+  gameMode="computer";
+  computerDifficulty=difficulty;
+
+  resetGameVariables();
+  setScreen("gameScreen");
+
+  updateTurnUI();
+  renderSecretBoard();
+
+  $("status").textContent =
+    "YOU • CHOOSE YOUR SECRET CHARACTER";
+}
 
 function selectSecretCharacter(character){
   if(gameStarted)return;
 
   if(gameMode==="2player"){
-    // PLAYER 1 chooses first. Immediately shuffle ONLY Player 2's board.
+
     if(currentPlayer===1){
+
       player1Character=character;
 
       if(!player2BoardShuffled){
@@ -202,13 +330,17 @@ function selectSecretCharacter(character){
       }
 
       currentPlayer=2;
+
       updateTurnUI();
-      $("status").textContent="PLAYER 2 • CHOOSE YOUR SECRET CHARACTER";
+
+      $("status").textContent =
+        "PLAYER 2 • CHOOSE YOUR SECRET CHARACTER";
+
       renderSecretBoard();
+
       return;
     }
 
-    // PLAYER 2 chooses. Now shuffle ONLY Player 1's board.
     player2Character=character;
 
     if(!player1BoardShuffled){
@@ -219,15 +351,20 @@ function selectSecretCharacter(character){
     currentPlayer=1;
     gameStarted=true;
     selectingSecret=false;
+
     updateTurnUI();
     beginTurn();
+
     return;
   }
 
-  // COMPUTER MODE
   player1Character=character;
-  const choices=characters.filter(c=>c.name!==character.name);
-  computerCharacter=choices[Math.floor(Math.random()*choices.length)];
+
+  const choices =
+    characters.filter(c=>c.name!==character.name);
+
+  computerCharacter =
+    choices[Math.floor(Math.random()*choices.length)];
 
   if(!player1BoardShuffled){
     player1Board=shuffleCharacters([...characters]);
@@ -237,25 +374,70 @@ function selectSecretCharacter(character){
   currentPlayer=1;
   gameStarted=true;
   selectingSecret=false;
+
   updateTurnUI();
   beginTurn();
 }
 
 function renderSecretBoard(){
-  const board=$("board");board.innerHTML="";
-  const list=currentPlayer===1?player1Board:player2Board;
+  const board=$("board");
+  board.innerHTML="";
+
+  const list =
+    currentPlayer===1
+      ? player1Board
+      : player2Board;
+
   list.forEach(character=>{
-    const card=document.createElement("button");card.className="character";card.innerHTML=`<div class="avatar">${drawCharacter(character)}</div><div class="character-name">${character.name}</div>`;
-    card.onclick=()=>selectSecretCharacter(character);board.appendChild(card);
+
+    const card=document.createElement("button");
+
+    card.className="character";
+
+    card.innerHTML =
+      `<div class="avatar">${drawCharacter(character)}</div>
+       <div class="character-name">${character.name}</div>`;
+
+    card.onclick=()=>{
+      selectSecretCharacter(character);
+    };
+
+    board.appendChild(card);
   });
 }
 
 function beginTurn(){
-  lastQuestion=null;$("questionResult").classList.add("hidden");$("questionResult").classList.remove("yes","no");
-  $("actionPanel").classList.remove("hidden");$("finalGuessBtn").classList.add("hidden");$("passBtn").classList.remove("hidden");
-  $("questionPanel").classList.remove("hidden");renderQuestionButtons();createBoard();
-  $("status").textContent=gameMode==="computer"?(currentPlayer===1?"YOUR TURN • ASK A QUESTION":"🤖 COMPUTER TURN"):"PLAYER "+currentPlayer+" • ASK A QUESTION";
-  if(gameMode==="computer"&&currentPlayer===2)setTimeout(computerTurn,700);
+
+  lastQuestion=null;
+
+  $("questionResult").classList.add("hidden");
+  $("questionResult").classList.remove("yes","no");
+
+  $("actionPanel").classList.remove("hidden");
+
+  $("finalGuessBtn").classList.add("hidden");
+  $("passBtn").classList.remove("hidden");
+
+  $("questionPanel").classList.remove("hidden");
+
+  renderQuestionButtons();
+  createBoard();
+
+  $("status").textContent =
+    gameMode==="computer"
+      ? (
+          currentPlayer===1
+            ? "YOUR TURN • ASK A QUESTION"
+            : "🤖 COMPUTER TURN"
+        )
+      : "PLAYER "+currentPlayer+" • ASK A QUESTION";
+
+  if(
+    gameMode==="computer" &&
+    currentPlayer===2
+  ){
+    setTimeout(computerTurn,700);
+  }
 }
 
 function currentRemaining(){
@@ -265,6 +447,7 @@ function currentRemaining(){
     return player2Remaining;
   }
 }
+
 function currentEliminated(){
   if(currentPlayer===1){
     return player1Eliminated;
@@ -272,6 +455,7 @@ function currentEliminated(){
     return player2Eliminated;
   }
 }
+
 function currentBoard(){
   if(currentPlayer===1){
     return player1Board;
@@ -279,7 +463,21 @@ function currentBoard(){
     return player2Board;
   }
 }
-function targetCharacter(){return gameMode==="2player"?(currentPlayer===1?player2Character:player1Character):(currentPlayer===1?computerCharacter:player1Character);}
+
+function targetCharacter(){
+  return gameMode==="2player"
+    ? (
+        currentPlayer===1
+          ? player2Character
+          : player1Character
+      )
+    : (
+        currentPlayer===1
+          ? computerCharacter
+          : player1Character
+      );
+}
+
 function setCurrentState(remaining,eliminated){
   if(currentPlayer===1){
     player1Remaining=remaining;
@@ -291,140 +489,477 @@ function setCurrentState(remaining,eliminated){
 }
 
 function createBoard(){
-  const board=$("board");board.innerHTML="";const list=currentBoard();const eliminated=currentEliminated();
+
+  const board=$("board");
+  board.innerHTML="";
+
+  const list=currentBoard();
+  const eliminated=currentEliminated();
+
   list.forEach(character=>{
-    const card=document.createElement("button");card.className="character";
-    const isElim=eliminated.some(c=>c.name===character.name);
-    card.innerHTML=`<div class="avatar">${drawCharacter(character)}</div><div class="character-name">${character.name}</div>${isElim?'<div class="eliminated-cross">✕</div>':''}`;
-    if(gameMode==="computer"&&currentPlayer===2){card.disabled=true;}else{card.onclick=()=>eliminateCharacter(character);}
+
+    const card=document.createElement("button");
+
+    card.className="character";
+
+    const isElim =
+      eliminated.some(c=>c.name===character.name);
+
+    card.innerHTML =
+      `<div class="avatar">${drawCharacter(character)}</div>
+       <div class="character-name">${character.name}</div>
+       ${isElim ? '<div class="eliminated-cross">✕</div>' : ''}`;
+
+    if(
+      gameMode==="computer" &&
+      currentPlayer===2
+    ){
+      card.disabled=true;
+    }else{
+      card.onclick=()=>{
+        eliminateCharacter(character);
+      };
+    }
+
     board.appendChild(card);
   });
 }
 
 function renderQuestionButtons(){
-  const wrap=$("questionButtons");wrap.innerHTML="";
+
+  const wrap=$("questionButtons");
+  wrap.innerHTML="";
+
   Object.keys(questionData).forEach(category=>{
-    const b=document.createElement("button");b.textContent=questionNames[category];
-    const hasAvailable=questionData[category].some(v=>!askedQuestions[currentPlayer][category+":"+v]);
-    b.disabled=!hasAvailable;b.onclick=()=>showQuestion(category);wrap.appendChild(b);
+
+    const b=document.createElement("button");
+
+    b.textContent=questionNames[category];
+
+    const hasAvailable =
+      questionData[category].some(
+        v=>!askedQuestions[currentPlayer][category+":"+v]
+      );
+
+    b.disabled=!hasAvailable;
+
+    b.onclick=()=>{
+      showQuestion(category);
+    };
+
+    wrap.appendChild(b);
   });
 }
+
 function showQuestion(category){
+
   playSound("click");
   vibrate();
-  if(!gameStarted||selectingSecret||currentPlayer===2&&gameMode==="computer")return;
-  $("questionIcon").textContent=questionIcons[category];$("questionTitle").textContent=questionNames[category];
-  const box=$("questionOptions");box.innerHTML="";
+
+  if(
+    !gameStarted ||
+    selectingSecret ||
+    currentPlayer===2 &&
+    gameMode==="computer"
+  )return;
+
+  $("questionIcon").textContent =
+    questionIcons[category];
+
+  $("questionTitle").textContent =
+    questionNames[category];
+
+  const box=$("questionOptions");
+  box.innerHTML="";
+
   questionData[category].forEach(value=>{
-    const b=document.createElement("button");b.textContent=value;const key=category+":"+value;
-    b.disabled=!!askedQuestions[currentPlayer][key];
-    if(!b.disabled)b.onclick=()=>{askedQuestions[currentPlayer][key]=true;closeQuestion();processQuestion(category,value);};
+
+    const b=document.createElement("button");
+
+    b.textContent=value;
+
+    const key=category+":"+value;
+
+    b.disabled=
+      !!askedQuestions[currentPlayer][key];
+
+    if(!b.disabled){
+
+      b.onclick=()=>{
+
+        askedQuestions[currentPlayer][key]=true;
+
+        closeQuestion();
+
+        processQuestion(
+          category,
+          value
+        );
+      };
+    }
+
     box.appendChild(b);
   });
-  $("questionModal").classList.remove("hidden");
+
+  $("questionModal")
+    .classList.remove("hidden");
 }
-function closeQuestion(){$("questionModal").classList.add("hidden");}
+
+function closeQuestion(){
+  $("questionModal")
+    .classList.add("hidden");
+}
 
 function processQuestion(category,value){
-  const target=targetCharacter();if(!target)return;
-  const yes=target[category]===value;
-  lastQuestion={category,value,yes};
-  showQuestionResult(category,value,yes);
-  if(gameMode==="computer"&&currentPlayer===2){
-    applyQuestionToCurrent(category,value,yes);
+
+  const target=targetCharacter();
+
+  if(!target)return;
+
+  const yes =
+    target[category]===value;
+
+  lastQuestion={
+    category,
+    value,
+    yes
+  };
+
+  showQuestionResult(
+    category,
+    value,
+    yes
+  );
+
+  if(
+    gameMode==="computer" &&
+    currentPlayer===2
+  ){
+
+    applyQuestionToCurrent(
+      category,
+      value,
+      yes
+    );
+
     createBoard();
-    if(player2Remaining.length<=1){setTimeout(()=>computerMakeGuess(),700);return;}
-    setTimeout(()=>{currentPlayer=1;updateTurnUI();beginTurn();},900);return;
+
+    if(player2Remaining.length<=1){
+
+      setTimeout(
+        ()=>computerMakeGuess(),
+        700
+      );
+
+      return;
+    }
+
+    setTimeout(()=>{
+
+      currentPlayer=1;
+
+      updateTurnUI();
+      beginTurn();
+
+    },900);
+
+    return;
   }
-  applyQuestionToCurrent(category,value,yes);createBoard();renderQuestionButtons();
-  if(currentRemaining().length<=1){showGuessState();}
-  else{$("status").textContent=gameMode==="computer"?"YOUR TURN • CHECK YOUR BOARD THEN PASS":"PLAYER "+currentPlayer+" • CHECK YOUR BOARD THEN PASS";$("questionPanel").classList.add("hidden");$("passBtn").classList.remove("hidden");}
+
+  applyQuestionToCurrent(
+    category,
+    value,
+    yes
+  );
+
+  createBoard();
+  renderQuestionButtons();
+
+  if(currentRemaining().length<=1){
+
+    showGuessState();
+
+  }else{
+
+    $("status").textContent =
+      gameMode==="computer"
+        ? "YOUR TURN • CHECK YOUR BOARD THEN PASS"
+        : "PLAYER "+currentPlayer+
+          " • CHECK YOUR BOARD THEN PASS";
+
+    $("questionPanel")
+      .classList.add("hidden");
+
+    $("passBtn")
+      .classList.remove("hidden");
+  }
 }
 
-function applyQuestionToCurrent(category,value,yes){
-  const remaining=currentRemaining();const newRemaining=yes?remaining.filter(c=>c[category]===value):remaining.filter(c=>c[category]!==value);
-  const eliminated=characters.filter(c=>!newRemaining.some(r=>r.name===c.name));setCurrentState(newRemaining,eliminated);
+function applyQuestionToCurrent(
+  category,
+  value,
+  yes
+){
+
+  const remaining=currentRemaining();
+
+  const newRemaining =
+    yes
+      ? remaining.filter(
+          c=>c[category]===value
+        )
+      : remaining.filter(
+          c=>c[category]!==value
+        );
+
+  const eliminated =
+    characters.filter(
+      c=>!newRemaining.some(
+        r=>r.name===c.name
+      )
+    );
+
+  setCurrentState(
+    newRemaining,
+    eliminated
+  );
 }
-function showQuestionResult(category,value,yes){
-  playSound(yes ? "yes" : "no");
+
+function showQuestionResult(
+  category,
+  value,
+  yes
+){
+
+  playSound(
+    yes ? "yes" : "no"
+  );
+
   vibrate();
-  const box=$("questionResult");box.classList.remove("hidden","yes","no","pulse-result");void box.offsetWidth;box.classList.add(yes?"yes":"no","pulse-result");box.innerHTML=`<span>${questionNames[category]}: ${value}</span><strong>${yes?"YES ✓":"NO ✕"}</strong>`;
+
+  const box=$("questionResult");
+
+  box.classList.remove(
+    "hidden",
+    "yes",
+    "no",
+    "pulse-result"
+  );
+
+  void box.offsetWidth;
+
+  box.classList.add(
+    yes ? "yes" : "no",
+    "pulse-result"
+  );
+
+  box.innerHTML =
+    `<span>${questionNames[category]}: ${value}</span>
+     <strong>${yes ? "YES ✓" : "NO ✕"}</strong>`;
 }
+
 function showGuessState(){
-  $("questionPanel").classList.add("hidden");$("passBtn").classList.add("hidden");$("finalGuessBtn").classList.remove("hidden");
-  $("status").textContent=gameMode==="computer"?"🎯 YOUR FINAL GUESS IS READY":"🎯 PLAYER "+currentPlayer+" • FINAL GUESS IS READY";
-  $("actionPanel").classList.remove("hidden");
+
+  $("questionPanel")
+    .classList.add("hidden");
+
+  $("passBtn")
+    .classList.add("hidden");
+
+  $("finalGuessBtn")
+    .classList.remove("hidden");
+
+  $("status").textContent =
+    gameMode==="computer"
+      ? "🎯 YOUR FINAL GUESS IS READY"
+      : "🎯 PLAYER "+currentPlayer+
+        " • FINAL GUESS IS READY";
+
+  $("actionPanel")
+    .classList.remove("hidden");
 }
 
 function eliminateCharacter(character){
-  if(!gameStarted||selectingSecret||gameMode==="computer"&&currentPlayer===2)return;
-  let eliminated=[...currentEliminated()];const exists=eliminated.some(c=>c.name===character.name);const remaining=currentRemaining();
-  if(exists){eliminated=eliminated.filter(c=>c.name!==character.name);}
-  else{
+
+  if(
+    !gameStarted ||
+    selectingSecret ||
+    gameMode==="computer" &&
+    currentPlayer===2
+  )return;
+
+  let eliminated=[
+    ...currentEliminated()
+  ];
+
+  const exists =
+    eliminated.some(
+      c=>c.name===character.name
+    );
+
+  const remaining=
+    currentRemaining();
+
+  if(exists){
+
+    eliminated =
+      eliminated.filter(
+        c=>c.name!==character.name
+      );
+
+  }else{
+
     if(remaining.length<=1)return;
+
     eliminated.push(character);
   }
-  const newRemaining=characters.filter(c=>!eliminated.some(e=>e.name===c.name));setCurrentState(newRemaining,eliminated);createBoard();
-  if(newRemaining.length<=1)showGuessState();
+
+  const newRemaining =
+    characters.filter(
+      c=>!eliminated.some(
+        e=>e.name===c.name
+      )
+    );
+
+  setCurrentState(
+    newRemaining,
+    eliminated
+  );
+
+  createBoard();
+
+  if(newRemaining.length<=1){
+    showGuessState();
+  }
 }
 
 function passTurn(){
-  if(!gameStarted||currentRemaining().length<=1)return;
-  if(gameMode==="2player"){currentPlayer=currentPlayer===1?2:1;updateTurnUI();beginTurn();return;}
-  if(currentPlayer===1){currentPlayer=2;updateTurnUI();beginTurn();}
+
+  if(
+    !gameStarted ||
+    currentRemaining().length<=1
+  )return;
+
+  if(gameMode==="2player"){
+
+    currentPlayer =
+      currentPlayer===1 ? 2 : 1;
+
+    updateTurnUI();
+    beginTurn();
+
+    return;
+  }
+
+  if(currentPlayer===1){
+
+    currentPlayer=2;
+
+    updateTurnUI();
+    beginTurn();
+  }
 }
 
 function computerTurn(){
-  if(!gameStarted||gameMode!=="computer"||currentPlayer!==2)return;
 
-  $("questionPanel").classList.add("hidden");
-  $("actionPanel").classList.add("hidden");
-  $("status").textContent="🤖 COMPUTER IS THINKING...";
+  if(
+    !gameStarted ||
+    gameMode!=="computer" ||
+    currentPlayer!==2
+  )return;
+
+  $("questionPanel")
+    .classList.add("hidden");
+
+  $("actionPanel")
+    .classList.add("hidden");
+
+  $("status").textContent =
+    "🤖 COMPUTER IS THINKING...";
 
   const possible=[];
 
   Object.keys(questionData).forEach(category=>{
+
     questionData[category].forEach(value=>{
-      const key=category+":"+value;
+
+      const key=
+        category+":"+value;
+
       if(askedQuestions[2][key])return;
 
-      const yesCount=player2Remaining.filter(c=>c[category]===value).length;
-      const noCount=player2Remaining.length-yesCount;
+      const yesCount =
+        player2Remaining.filter(
+          c=>c[category]===value
+        ).length;
+
+      const noCount =
+        player2Remaining.length-yesCount;
 
       possible.push({
         category,
         value,
-        score:Math.min(yesCount,noCount)
+        score:Math.min(
+          yesCount,
+          noCount
+        )
       });
     });
   });
 
   if(!possible.length){
-    setTimeout(computerMakeGuess,1800);
+
+    setTimeout(
+      computerMakeGuess,
+      1800
+    );
+
     return;
   }
 
-  possible.sort((a,b)=>b.score-a.score);
+  possible.sort(
+    (a,b)=>b.score-a.score
+  );
 
   let question;
 
   if(computerDifficulty==="hard"){
+
     question=possible[0];
-  }else if(computerDifficulty==="medium"){
-    question=possible[
-      Math.floor(Math.random()*Math.min(4,possible.length))
+
+  }else if(
+    computerDifficulty==="medium"
+  ){
+
+    question =
+      possible[
+        Math.floor(
+          Math.random() *
+          Math.min(4,possible.length)
+        )
     ];
   }else{
-    question=possible[
-      Math.floor(Math.random()*possible.length)
-    ];
+
+    question =
+      possible[
+        Math.floor(
+          Math.random() *
+          possible.length
+        )
+      ];
   }
 
-  askedQuestions[2][question.category+":"+question.value]=true;
+  askedQuestions[2][
+    question.category+":"+question.value
+  ]=true;
 
   setTimeout(()=>{
+
     const target=player1Character;
-    const yes=target[question.category]===question.value;
+
+    const yes =
+      target[question.category]===
+      question.value;
 
     lastQuestion={
       category:question.category,
@@ -447,303 +982,715 @@ function computerTurn(){
     createBoard();
 
     if(player2Remaining.length<=1){
-      setTimeout(computerMakeGuess,2000);
+
+      setTimeout(
+        computerMakeGuess,
+        2000
+      );
+
       return;
     }
 
     setTimeout(()=>{
+
       currentPlayer=1;
+
       updateTurnUI();
       beginTurn();
+
     },2000);
 
   },2000);
 }
 
 function computerMakeGuess(){
+
   if(!gameStarted)return;
-  const guess=player2Remaining[0];
-  if(!guess){gameStarted=false;showFinalReveal(null,player1Character,false);return;}
+
+  const guess=
+    player2Remaining[0];
+
+  if(!guess){
+
+    gameStarted=false;
+
+    showFinalReveal(
+      null,
+      player1Character,
+      false
+    );
+
+    return;
+  }
+
   setTimeout(()=>{
-  const computerWon=guess.name===player1Character.name;
-  recordGameResult(!computerWon);
-  showFinalReveal(guess,player1Character,computerWon,true);
-},900);
+
+    const computerWon =
+      guess.name===
+      player1Character.name;
+
+    recordGameResult(
+      !computerWon
+    );
+
+    showFinalReveal(
+      guess,
+      player1Character,
+      computerWon,
+      true
+    );
+
+  },900);
 }
 
 function finalGuess(){
-  if(!gameStarted)return;const remaining=currentRemaining();if(!remaining.length)return;
-  const guess=remaining[0];const secret=targetCharacter();if(!secret)return;
+
+  if(!gameStarted)return;
+
+  const remaining=
+    currentRemaining();
+
+  if(!remaining.length)return;
+
+  const guess=
+    remaining[0];
+
+  const secret=
+    targetCharacter();
+
+  if(!secret)return;
+
   gameStarted=false;
-$("questionPanel").classList.add("hidden");
-$("actionPanel").classList.add("hidden");
 
-const correct=guess.name===secret.name;
+  $("questionPanel")
+    .classList.add("hidden");
+
+  $("actionPanel")
+    .classList.add("hidden");
+
+  const correct=
+    guess.name===secret.name;
+
   gamesPlayed++;
+
   if(correct){
-  wins++;
-  winStreak++;
-}else{
-  winStreak=0;
-  }
-saveStats();
-playSound(correct ? "win" : "lose");
-  vibrate(correct ? "win" : "lose");
 
-showFinalReveal(guess,secret,correct,false);
-}
-
-function makeRevealCard(character,extraClass=""){return character?`<div class="reveal-card ${extraClass}"><img src="${imageUrl(character)}" alt="${character.name}"></div>`:`<div class="reveal-card ${extraClass}"></div>`;}
-function recordGameResult(won){
-  let gamesPlayed=Number(localStorage.getItem("gamesPlayed")||0)+1;
-  let wins=Number(localStorage.getItem("wins")||0);
-  let winStreak=Number(localStorage.getItem("winStreak")||0);
-
-  if(won){
     wins++;
     winStreak++;
+
   }else{
+
     winStreak=0;
   }
 
-  localStorage.setItem("gamesPlayed",gamesPlayed);
-  localStorage.setItem("wins",wins);
-  localStorage.setItem("winStreak",winStreak);
-}
-function showFinalReveal(guess,secret,correct,isComputer=false){
-  gameStarted=false;$("revealModal").classList.remove("hidden");$("guessRevealCard").innerHTML=makeRevealCard(guess);$("opponentRevealCard").innerHTML=makeRevealCard(null,"shuffle-card");$("revealOutcome").textContent="";$("revealOutcome").className="reveal-outcome";$("revealSubtitle").textContent="OPPONENT PICKED...";
-  const shuffleNames=shuffleCharacters([...characters]).slice(0,5);let index=0;
-  const shuffleStep=()=>{if(index<shuffleNames.length){$("opponentRevealCard").innerHTML=makeRevealCard(shuffleNames[index],"shuffle-card");index++;revealTimer=setTimeout(shuffleStep,450);return;}$("opponentRevealCard").innerHTML=makeRevealCard(secret);$("revealSubtitle").textContent=correct?"RIGHT PICK!":"WRONG PICK!";$("revealOutcome").textContent=correct?(isComputer?"🤖 COMPUTER WINS!":"🏆 YOU WIN!"):(isComputer?"🏆 YOU WIN!":"🤖 OPPONENT WINS!");$("revealOutcome").classList.add(correct?"win":"lose","winner-pop");};
-  revealTimer=setTimeout(shuffleStep,500);
+  saveStats();
+
+  playSound(
+    correct ? "win" : "lose"
+  );
+
+  vibrate(
+    correct ? "win" : "lose"
+  );
+
+  showFinalReveal(
+    guess,
+    secret,
+    correct,
+    false
+  );
 }
 
-function startRematch(){$("revealModal").classList.add("hidden");if(gameMode==="2player")startGame("2player");else startComputerGame(computerDifficulty);}
-function confirmExit(){if(!gameStarted){goHome();return;}openConfirmExit();}
+function makeRevealCard(
+  character,
+  extraClass=""
+){
+
+  return character
+    ? `<div class="reveal-card ${extraClass}">
+         <img src="${imageUrl(character)}" alt="${character.name}">
+       </div>`
+    : `<div class="reveal-card ${extraClass}"></div>`;
+}
+
+function recordGameResult(won){
+
+  let gamesPlayed=
+    Number(
+      localStorage.getItem("gamesPlayed")
+    )+1;
+
+  let wins=
+    Number(
+      localStorage.getItem("wins")
+    )||0;
+
+  let winStreak=
+    Number(
+      localStorage.getItem("winStreak")
+    )||0;
+
+  if(won){
+
+    wins++;
+    winStreak++;
+
+  }else{
+
+    winStreak=0;
+  }
+
+  localStorage.setItem(
+    "gamesPlayed",
+    gamesPlayed
+  );
+
+  localStorage.setItem(
+    "wins",
+    wins
+  );
+
+  localStorage.setItem(
+    "winStreak",
+    winStreak
+  );
+}
+
+function showFinalReveal(
+  guess,
+  secret,
+  correct,
+  isComputer=false
+){
+
+  gameStarted=false;
+
+  $("revealModal")
+    .classList.remove("hidden");
+
+  $("guessRevealCard").innerHTML =
+    makeRevealCard(guess);
+
+  $("opponentRevealCard").innerHTML =
+    makeRevealCard(
+      null,
+      "shuffle-card"
+    );
+
+  $("revealOutcome").textContent="";
+
+  $("revealOutcome").className=
+    "reveal-outcome";
+
+  $("revealSubtitle").textContent=
+    "OPPONENT PICKED...";
+
+  const shuffleNames=
+    shuffleCharacters(
+      [...characters]
+    ).slice(0,5);
+
+  let index=0;
+
+  const shuffleStep=()=>{
+
+    if(index<shuffleNames.length){
+
+      $("opponentRevealCard").innerHTML=
+        makeRevealCard(
+          shuffleNames[index],
+          "shuffle-card"
+        );
+
+      index++;
+
+      revealTimer=
+        setTimeout(
+          shuffleStep,
+          450
+        );
+
+      return;
+    }
+
+    $("opponentRevealCard").innerHTML=
+      makeRevealCard(secret);
+
+    $("revealSubtitle").textContent=
+      correct
+        ? "RIGHT PICK!"
+        : "WRONG PICK!";
+
+    $("revealOutcome").textContent=
+      correct
+        ? (
+            isComputer
+              ? "🤖 COMPUTER WINS!"
+              : "🏆 YOU WIN!"
+          )
+        : (
+            isComputer
+              ? "🏆 YOU WIN!"
+              : "🤖 OPPONENT WINS!"
+          );
+
+    $("revealOutcome")
+      .classList.add(
+        correct ? "win" : "lose",
+        "winner-pop"
+      );
+  };
+
+  revealTimer=
+    setTimeout(
+      shuffleStep,
+      500
+    );
+}
+
+function startRematch(){
+
+  $("revealModal")
+    .classList.add("hidden");
+
+  if(gameMode==="2player"){
+
+    startGame("2player");
+
+  }else{
+
+    startComputerGame(
+      computerDifficulty
+    );
+  }
+}
+
+function confirmExit(){
+
+  if(!gameStarted){
+
+    goHome();
+    return;
+  }
+
+  openConfirmExit();
+}
+
 function openConfirmExit(){
-  $("infoIcon").textContent="🚪";$("infoTitle").textContent="LEAVE GAME?";$("infoContent").innerHTML='<p>Your current game will be lost.</p><div class="reveal-actions"><button onclick="closeInfo()">CANCEL</button><button onclick="goHome()">EXIT</button></div>';$('infoModal').classList.remove('hidden');
-}
-function closeInfo(){$("infoModal").classList.add("hidden");}
-function openProfile(){
-  $("infoIcon").textContent="👤";
-  $("infoTitle").textContent="PLAYER PROFILE";
 
-  const gamesPlayed=Number(localStorage.getItem("gamesPlayed")||0);
-  const wins=Number(localStorage.getItem("wins")||0);
-  const winStreak=Number(localStorage.getItem("winStreak")||0);
+  $("infoIcon").textContent="🚪";
+  $("infoTitle").textContent="LEAVE GAME?";
+
+  $("infoContent").innerHTML=
+    "<p>Your current game will be lost.</p>" +
+    "<div class='reveal-actions'>" +
+    "<button onclick='closeInfo()'>CANCEL</button>" +
+    "<button onclick='goHome()'>EXIT</button>" +
+    "</div>";
+
+  $("infoModal")
+    .classList.remove("hidden");
+}
+
+function closeInfo(){
+
+  $("infoModal")
+    .classList.add("hidden");
+}
+
+function openProfile(){
+
+  $("infoIcon").textContent="👤";
+  $("infoTitle").textContent=
+    "PLAYER PROFILE";
+
+  const gamesPlayed=
+    Number(
+      localStorage.getItem("gamesPlayed")
+    )||0;
+
+  const wins=
+    Number(
+      localStorage.getItem("wins")
+    )||0;
+
+  const winStreak=
+    Number(
+      localStorage.getItem("winStreak")
+    )||0;
 
   $("infoContent").innerHTML=
     "<p><b>Guess Person</b></p>"+
     "<ul class='info-list'>"+
-    "<li>Games played: <b>"+gamesPlayed+"</b></li>"+
-    "<li>Wins: <b>"+wins+"</b></li>"+
-    "<li>Win streak: <b>"+winStreak+"</b></li>"+
+    "<li>Games played: <b>"+
+      gamesPlayed+
+    "</b></li>"+
+    "<li>Wins: <b>"+
+      wins+
+    "</b></li>"+
+    "<li>Win streak: <b>"+
+      winStreak+
+    "</b></li>"+
     "<li>Level: <b>1</b></li>"+
     "</ul>";
 
-  $("infoModal").classList.remove("hidden");
+  $("infoModal")
+    .classList.remove("hidden");
 }
+
 function openSettings(){
+
   $("infoIcon").textContent="⚙️";
-  $("infoTitle").textContent="SETTINGS";
+  $("infoTitle").textContent=
+    "SETTINGS";
 
   $("infoContent").innerHTML=
-    '<div class="info-list">' +
+    '<div class="info-list">'+
     '<p>🔊 Sound: <button id="soundToggle">'+
-    (soundEnabled ? "ON" : "OFF")+
-    '</button></p>' +
+      (soundEnabled ? "ON" : "OFF")+
+    '</button></p>'+
     '<p>🎵 Music: <button id="musicToggle">'+
-(musicEnabled ? "ON" : "OFF")+
-'</button></p>' +
+      (musicEnabled ? "ON" : "OFF")+
+    '</button></p>'+
     '<p>📳 Vibration: <button id="vibrationToggle">'+
-(vibrationEnabled ? "ON" : "OFF")+
-'</button></p>' +
-    '<p>🌐 Language: <b>English</b></p>' +
-    '<p>Sound and vibration controls are available.</p>' +
+      (vibrationEnabled ? "ON" : "OFF")+
+    '</button></p>'+
+    '<p>🌐 Language: <b>English</b></p>'+
+    '<p>Sound and vibration controls are available.</p>'+
     '</div>';
 
-  $("infoModal").classList.remove("hidden");
+  $("infoModal")
+    .classList.remove("hidden");
 
   $("soundToggle").onclick=function(){
+
     soundEnabled=!soundEnabled;
+
     $("soundToggle").textContent=
-      soundEnabled ? "ON" : "OFF";
+      soundEnabled
+        ? "ON"
+        : "OFF";
 
     if(soundEnabled){
       playSound("click");
     }
   };
+
   $("vibrationToggle").onclick=function(){
-  vibrationEnabled=!vibrationEnabled;
 
-  $("vibrationToggle").textContent=
-    vibrationEnabled ? "ON" : "OFF";
+    vibrationEnabled=
+      !vibrationEnabled;
 
-  if(vibrationEnabled){
-    vibrate();
-  }
-};
+    $("vibrationToggle").textContent=
+      vibrationEnabled
+        ? "ON"
+        : "OFF";
+
+    if(vibrationEnabled){
+      vibrate();
+    }
+  };
+
   $("musicToggle").onclick=function(){
-  musicEnabled=!musicEnabled;
 
-  $("musicToggle").textContent=
-    musicEnabled ? "ON" : "OFF";
+    musicEnabled=!musicEnabled;
 
-  if(musicEnabled){
-    startMusic();
-  }else{
-    stopMusic();
-  }
-};
+    $("musicToggle").textContent=
+      musicEnabled
+        ? "ON"
+        : "OFF";
+
+    if(musicEnabled){
+
+      startMusic();
+
+    }else{
+
+      stopMusic();
+    }
+  };
 }
+
 function openHelp(){
-  $("infoIcon").textContent="❓";
-  $("infoTitle").textContent="HOW TO PLAY";
+
+  $("infoIcon").textContent="?";
+  $("infoTitle").textContent=
+    "HOW TO PLAY";
+
   $("infoContent").innerHTML=
-    "<ol class='info-list'>" +
-    "<li>Choose your secret character.</li>" +
-    "<li>Ask questions to narrow the board.</li>" +
-    "<li>Tap cards to manually eliminate or revive them.</li>" +
-    "<li>Press PASS when you are ready for the opponent.</li>" +
-    "<li>When one character remains, press GUESS.</li>" +
+    "<ol class='info-list'>"+
+    "<li>Choose your secret character.</li>"+
+    "<li>Ask questions to narrow the board.</li>"+
+    "<li>Tap cards to manually eliminate or revive them.</li>"+
+    "<li>Press PASS when you are ready for the opponent.</li>"+
+    "<li>When one character remains, press GUESS.</li>"+
     "</ol>";
-  $("infoModal").classList.remove("hidden");
+
+  $("infoModal")
+    .classList.remove("hidden");
 }
 
 function openAbout(){
+
   $("infoIcon").textContent="🏆";
   $("infoTitle").textContent="ABOUT";
+
   $("infoContent").innerHTML=
-    "<p><b>Guess The Person</b></p>" +
-    "<p>A fast Guess Who style character game.</p>" +
+    "<p><b>Guess The Person</b></p>"+
+    "<p>A fast Guess Who style character game.</p>"+
     "<p>30 characters • 2 Players • Computer</p>";
-  $("infoModal").classList.remove("hidden");
+
+  $("infoModal")
+    .classList.remove("hidden");
 }
+
 function updateTurnUI(){
+
   const p1=$("player1Badge");
   const p2=$("player2Badge");
 
-  p1.classList.toggle("active",currentPlayer===1);
-  p2.classList.toggle("active",currentPlayer===2);
+  p1.classList.toggle(
+    "active",
+    currentPlayer===1
+  );
 
-  $("player2Name").textContent =
-    gameMode==="computer" ? "COMPUTER" : "PLAYER 2";
+  p2.classList.toggle(
+    "active",
+    currentPlayer===2
+  );
 
-  $("turnLabel").textContent =
+  $("player2Name").textContent=
     gameMode==="computer"
-      ? (currentPlayer===1 ? "YOUR TURN" : "AI TURN")
+      ? "COMPUTER"
+      : "PLAYER 2";
+
+  $("turnLabel").textContent=
+    gameMode==="computer"
+      ? (
+          currentPlayer===1
+            ? "YOUR TURN"
+            : "AI TURN"
+        )
       : "PLAYER "+currentPlayer+" TURN";
-}  
+}
+
+// ========================================
 // HOW TO PLAY
-let howToPlayPage = 1;
+// ========================================
 
-function openHowToPlay() {
-  howToPlayPage = 1;
+let howToPlayPage=1;
+
+function openHowToPlay(){
+
+  howToPlayPage=1;
+
   updateHowToPlay();
-  document.getElementById("howToPlayModal").classList.remove("hidden");
+
+  document
+    .getElementById("howToPlayModal")
+    .classList.remove("hidden");
 }
 
-function closeHowToPlay() {
-  document.getElementById("howToPlayModal").classList.add("hidden");
-}
-function updateHowToPlay() {
-  const content = document.getElementById("howToPlayContent");
-  const indicator = document.getElementById("howPageIndicator");
-  const backBtn = document.getElementById("howBackBtn");
-  const nextBtn = document.getElementById("howNextBtn");
+function closeHowToPlay(){
 
-  const steps = [
+  document
+    .getElementById("howToPlayModal")
+    .classList.add("hidden");
+}
+
+function updateHowToPlay(){
+
+  const content=
+    document.getElementById(
+      "howToPlayContent"
+    );
+
+  const indicator=
+    document.getElementById(
+      "howPageIndicator"
+    );
+
+  const backBtn=
+    document.getElementById(
+      "howBackBtn"
+    );
+
+  const nextBtn=
+    document.getElementById(
+      "howNextBtn"
+    );
+
+  const steps=[
+
     {
-  icon: "🎯",
-  title: "CHOOSE YOUR CHARACTER",
-  text: "Choose one secret character. Your opponent must guess who you picked.",
-  visual: "👤  👤  👤  🎯"
-},
-    {
-      icon: "❓",
-      title: "ASK QUESTIONS",
-      text: "Ask YES or NO questions to find clues about your opponent's character."
+      icon:"🎯",
+      title:"CHOOSE YOUR CHARACTER",
+      text:"Choose one secret character. Your opponent must guess who you picked.",
+      visual:"👤 👤 👤 🎯"
     },
+
     {
-      icon: "❌",
-      title: "ELIMINATE",
-      text: "Use the answers to eliminate characters that do not match."
+      icon:"❓",
+      title:"ASK QUESTIONS",
+      text:"Ask YES or NO questions to find clues about your opponent's character."
     },
+
     {
-      icon: "🏆",
-      title: "MAKE YOUR GUESS",
-      text: "When you think you know the character, make your final guess. Guess correctly to win!"
+      icon:"❌",
+      title:"ELIMINATE",
+      text:"Use the answers to eliminate characters that do not match."
+    },
+
+    {
+      icon:"🏆",
+      title:"MAKE YOUR GUESS",
+      text:"When you think you know the character, make your final guess. Guess correctly to win!"
     }
+
   ];
 
-  const step = steps[howToPlayPage - 1];
+  const step=
+    steps[howToPlayPage-1];
 
-  content.innerHTML = `
+  content.innerHTML=`
+
     <div class="how-step">
-      <div class="how-step-icon">${step.icon}</div>
+
+      <div class="how-step-icon">
+        ${step.icon}
+      </div>
+
       <div class="how-visual">
-  <img src="https://akibandsajid-art.github.io/Atif/how${howToPlayPage}.png" alt="${step.title}">
-</div>
+
+        <img
+          src="https://akibandsajid-art.github.io/Atif/how${howToPlayPage}.png"
+          alt="${step.title}"
+        >
+
+      </div>
+
       <h3>${step.title}</h3>
+
       <p>${step.text}</p>
+
     </div>
+
   `;
 
   updateHowToPlayDots();
 
-  backBtn.disabled = howToPlayPage === 1;
+  backBtn.disabled=
+    howToPlayPage===1;
 
-  if (howToPlayPage === steps.length) {
-    nextBtn.textContent = "DONE ✓";
-  } else {
-    nextBtn.textContent = "NEXT →";
+  if(
+    howToPlayPage===steps.length
+  ){
+
+    nextBtn.textContent=
+      "DONE ✓";
+
+  }else{
+
+    nextBtn.textContent=
+      "NEXT →";
   }
 }
 
-function howToPlayNext() {
-  if (howToPlayPage < 4) {
+function howToPlayNext(){
+
+  if(howToPlayPage<4){
+
     howToPlayPage++;
+
     updateHowToPlay();
-  } else {
+
+  }else{
+
     closeHowToPlay();
   }
 }
 
-function howToPlayBack() {
-  if (howToPlayPage > 1) {
+function howToPlayBack(){
+
+  if(howToPlayPage>1){
+
     howToPlayPage--;
+
     updateHowToPlay();
   }
 }
+
 // HOW TO PLAY - SWIPE
-let howTouchStartX = 0;
-let howTouchEndX = 0;
 
-const howToPlayArea = document.getElementById("howToPlayContent");
+let howTouchStartX=0;
+let howTouchEndX=0;
 
-howToPlayArea.addEventListener("touchstart", function(e) {
-  howTouchStartX = e.changedTouches[0].screenX;
-}, { passive: true });
+const howToPlayArea=
+  document.getElementById(
+    "howToPlayContent"
+  );
 
-howToPlayArea.addEventListener("touchend", function(e) {
-  howTouchEndX = e.changedTouches[0].screenX;
-  handleHowSwipe();
-}, { passive: true });
+if(howToPlayArea){
 
-function handleHowSwipe() {
-  const swipeDistance = howTouchEndX - howTouchStartX;
+  howToPlayArea.addEventListener(
+    "touchstart",
+    function(e){
 
-  if (Math.abs(swipeDistance) < 50) return;
+      howTouchStartX=
+        e.changedTouches[0].screenX;
 
-  if (swipeDistance < 0) {
+    },
+    {passive:true}
+  );
+
+  howToPlayArea.addEventListener(
+    "touchend",
+    function(e){
+
+      howTouchEndX=
+        e.changedTouches[0].screenX;
+
+      handleHowSwipe();
+
+    },
+    {passive:true}
+  );
+}
+
+function handleHowSwipe(){
+
+  const swipeDistance=
+    howTouchEndX-howTouchStartX;
+
+  if(
+    Math.abs(swipeDistance)<50
+  )return;
+
+  if(swipeDistance<0){
+
     howToPlayNext();
-  } else {
+
+  }else{
+
     howToPlayBack();
   }
 }
-function updateHowToPlayDots() {
-  const dots = document.querySelectorAll("#howPageIndicator span");
 
-  dots.forEach((dot, index) => {
-    dot.classList.toggle("active", index === howToPlayPage - 1);
-  });
-}
+function updateHowToPlayDots(){
+
+  const dots=
+    document.querySelectorAll(
+      "#howPageIndicator span"
+    );
+
+  dots.forEach(
+    (dot,index)=>{
+
+      dot.classList.toggle(
+        "active",
+        index===howToPlayPage-1
+      );
+
+    }
+  );
+    }
