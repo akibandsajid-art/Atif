@@ -136,7 +136,7 @@ const characters = [
   {name:"Olivia",gender:"Female",eyes:"Green",hair:"Bald",hairColor:"Blonde",skin:"Dark",accessories:"Jewelry",facialHair:"None"},
   {name:"Lia",gender:"Female",eyes:"Brown",hair:"Short",hairColor:"Gray",skin:"Light",accessories:"Jewelry",facialHair:"None"},
   {name:"Chloe",gender:"Female",eyes:"Green",hair:"Long",hairColor:"Brown",skin:"Olive",accessories:"Jewelry",facialHair:"None"},
-  {name:"Mila",gender:"Female",eyes:"Brown",hair:"Short",hairColor:"Gray",skin:"Light",accessories:"Jewelry",facialHair:"None"},
+  {name:"Mila",gender:"Female",eyes:"Brown",hair:"Short",hairColor:"Gray",skin:"Dark",accessories:"Jewelry",facialHair:"None"},
   {name:"Naomi",gender:"Female",eyes:"Black",hair:"Long",hairColor:"Black",skin:"Light",accessories:"Jewelry",facialHair:"None"},
   {name:"Julia",gender:"Female",eyes:"Green",hair:"Short",hairColor:"Gray",skin:"Dark",accessories:"Jewelry",facialHair:"None"}
 ];
